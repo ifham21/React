@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Search from "./components/Search";
 import Spinner from "./components/Spinner";
 import MovieCard from "./components/MovieCard";
+import { useDebounce } from "react-use";
 
 const API_BASE_URL = "https://api.themoviedb.org/3"; //base url for the API
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY; //API key from the .env file
@@ -20,6 +21,12 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(""); //error message state
   const [movieList, setMovieList] = useState([]); //movie list state
   const [isLoading, setIsLoading] = useState(false); //loading state
+  const [debounceSearchTerm, setDebounceSearchTerm] = useState(""); //debounced search term
+
+  //use the useDebounce hook to debounce the search term
+  //debounce the search term to prevent making too many API requests
+  //by waiting for the user to stop typing for 500ms (0.5s) before making the request
+  useDebounce( () => setDebounceSearchTerm(searchTerm), 500, [searchTerm]);
 
   const fetchMovies = async (query = '') => {
     setIsLoading(true); //start the fetching spinner
@@ -56,8 +63,8 @@ const App = () => {
 
   useEffect(() => {
     //useEffect to fetch the movies when the component mounts
-    fetchMovies(searchTerm); //fetch the movies
-  }, [searchTerm]); //run the effect when the searchTerm changes
+    fetchMovies(debounceSearchTerm); //fetch the movies
+  }, [debounceSearchTerm]); //run the effect when the searchTerm changes
 
   return (
     <main>
@@ -100,3 +107,13 @@ const App = () => {
 };
 
 export default App;
+
+// 1 - Created the app using Vite
+// 2 - Installed tailwind css
+// 3 - Added Search component
+// 4 - Added Spinner from flowbite spinner react
+// 5 - Added MovieCard component
+// 6 - Added API fetch to get movies from themoviedb
+// 7 - Added Search functionality
+// 8 - Optimize search functionality with the use of useDebounce
+// 8cont - install 'npm i react-use'
