@@ -21,12 +21,14 @@ const App = () => {
   const [movieList, setMovieList] = useState([]); //movie list state
   const [isLoading, setIsLoading] = useState(false); //loading state
 
-  const fetchMovies = async () => {
+  const fetchMovies = async (query = '') => {
     setIsLoading(true); //start the fetching spinner
     setErrorMessage(""); //clear the error message
 
     try {
-      const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`; //create the endpoint
+      const endpoint = query 
+      ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
+      : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`; //create the endpoint
       const response = await fetch(endpoint, API_OPTIONS); //fetch the endpoint with the options
       if (!response.ok) {
         //if the response is not ok, throw an error
@@ -54,8 +56,8 @@ const App = () => {
 
   useEffect(() => {
     //useEffect to fetch the movies when the component mounts
-    fetchMovies(); //fetch the movies
-  }, []);
+    fetchMovies(searchTerm); //fetch the movies
+  }, [searchTerm]); //run the effect when the searchTerm changes
 
   return (
     <main>
