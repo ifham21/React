@@ -3,6 +3,7 @@ import Search from "./components/Search";
 import Spinner from "./components/Spinner";
 import MovieCard from "./components/MovieCard";
 import { useDebounce } from "react-use";
+import { updateSearchCount } from "./appwrite";
 
 const API_BASE_URL = "https://api.themoviedb.org/3"; //base url for the API
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY; //API key from the .env file
@@ -53,6 +54,11 @@ const App = () => {
       }
       //finally populate the movieList with real movies
       setMovieList(data.results || []); //set the movieList to the results or an empty array if there are no results
+
+      if(query && data.results.length > 0){
+        await updateSearchCount(query, data.results[0]); //update the search count in the database
+      }
+
     } catch (error) {
       console.error(`Error fetchning movies: ${error}`); //log the error to the console
       setErrorMessage("Error fetching movies. Please try again later."); //set the error message
@@ -117,3 +123,5 @@ export default App;
 // 7 - Added Search functionality
 // 8 - Optimize search functionality with the use of useDebounce
 // 8cont - install 'npm i react-use'
+// 9 - Created an account at Appwrite for backend and database services
+// installed appwrite using 'npm install appwrite'
