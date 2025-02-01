@@ -164,3 +164,4 @@ export default App;
 // 9 - Created an account at Appwrite for backend and database services
 // installed appwrite using 'npm install appwrite'
 //10 - added trending movies section
+//11 - Inorder deploy the site =>  'npm run build' which created the dist folder
