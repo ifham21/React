@@ -3,7 +3,7 @@ import Search from "./components/Search";
 import Spinner from "./components/Spinner";
 import MovieCard from "./components/MovieCard";
 import { useDebounce } from "react-use";
-import { updateSearchCount } from "./appwrite";
+import { getTrendingMovies, updateSearchCount } from "./appwrite";
 
 const API_BASE_URL = "https://api.themoviedb.org/3"; //base url for the API
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY; //API key from the .env file
@@ -18,11 +18,14 @@ const API_OPTIONS = {
 };
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useState(""); //search term state
-  const [errorMessage, setErrorMessage] = useState(""); //error message state
-  const [movieList, setMovieList] = useState([]); //movie list state
-  const [isLoading, setIsLoading] = useState(false); //loading state
   const [debounceSearchTerm, setDebounceSearchTerm] = useState(""); //debounced search term
+  const [searchTerm, setSearchTerm] = useState(""); //search term state
+
+  const [movieList, setMovieList] = useState([]); //movie list state
+  const [errorMessage, setErrorMessage] = useState(""); //error message state
+  const [isLoading, setIsLoading] = useState(false); //loading state
+
+  const [trendingMovies, setTrendingMovies] = useState([]);
 
   //use the useDebounce hook to debounce the search term
   //debounce the search term to prevent making too many API requests
@@ -67,10 +70,27 @@ const App = () => {
     }
   };
 
+
+  const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies();
+
+      setTrendingMovies(movies);
+    } catch (error) {
+      console.error(`Error fetching trending movies: ${error}`);
+    }
+  }
+
   useEffect(() => {
     //useEffect to fetch the movies when the component mounts
     fetchMovies(debounceSearchTerm); //fetch the movies
   }, [debounceSearchTerm]); //run the effect when the searchTerm changes
+
+
+
+  useEffect(() => {
+    loadTrendingMovies();
+  }, []);
 
   return (
     <main>
@@ -87,8 +107,26 @@ const App = () => {
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </header>
 
+        {/* Trending Movies Section */}
+        {trendingMovies.length > 0 && (
+          <section className="trending">
+            <h2>Trending Movies</h2>
+
+            <ul>
+              {trendingMovies.map((movie, index) => (
+                <li key={movie.$id}>
+                  <p>{index + 1}</p>
+                  <img src={movie.poster_url} alt={movie.title} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+
+        {/* All Movies section */}
         <section className="all-movies">
-          <h2 className="mt-[20px]">All Movies</h2>
+          <h2>All Movies</h2>
 
           {isLoading ? (
             <p className="text-white">
@@ -125,3 +163,4 @@ export default App;
 // 8cont - install 'npm i react-use'
 // 9 - Created an account at Appwrite for backend and database services
 // installed appwrite using 'npm install appwrite'
+//10 - added trending movies section
