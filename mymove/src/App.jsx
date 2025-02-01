@@ -165,3 +165,7 @@ export default App;
 // installed appwrite using 'npm install appwrite'
 //10 - added trending movies section
 //11 - Inorder deploy the site =>  'npm run build' which created the dist folder
+// added  =>  base: "/mymove"   into vite.config.js
+// added =>   "homepage": "https://ifham21.github.io/React",    into package.json under name
+// added =>     "predeploy": "npm run build", "deploy": "gh-pages -d dist"    into package.jscon scripts
+// and then => '>npm run deploy'
